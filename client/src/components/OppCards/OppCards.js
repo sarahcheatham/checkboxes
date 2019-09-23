@@ -16,15 +16,6 @@ class OppCards extends Component{
         // onsitePrice: 1000
     }
 
-    // componentDidUpdate(prevProps, prevState) {
-    //     if (prevProps.currentOpp !== this.props.currentOpp) {
-    //         const selfPrice = this.props.currentOpp.price[0].self;
-    //         const remotePrice = this.props.currentOpp.price[1].remote;
-    //         const onsitePrice = this.props.currentOpp.price[2].onsite;
-    //         this.setState({selfPrice, remotePrice, onsitePrice})
-    //     }
-    // }
-    
     isEmpty = obj => {
         for(var key in obj){
             if(obj.hasOwnProperty(key)){
@@ -34,8 +25,8 @@ class OppCards extends Component{
         return true
     }
 
-    calculatePrice = () => {
-        if(!this.isEmpty(this.props.checkedOpps)){
+    componentDidUpdate(prevProps, prevState) {
+        if(prevProps.checkedOpps !== this.props.checkedOpps && !this.isEmpty(this.props.checkedOpps)){
             const reducer = (accumulator, currentValue) => accumulator + currentValue;
             
             const self = this.props.checkedOpps.map(opp => {
@@ -47,17 +38,13 @@ class OppCards extends Component{
             const onsite = this.props.checkedOpps.map(opp => {
                 return opp.price[2].onsite
             })
-            
-            console.log("SELF ARR:", self)
-            console.log("REMOTE ARR:", remote)
-            console.log("ONSITE ARR:", onsite)
-            console.log("SELF PRICE:", self.reduce(reducer))
-            console.log("REMOTE PRICE:", remote.reduce(reducer))
-            console.log("ONSITE PRICE:", onsite.reduce(reducer))
+            const selfTotal = self.reduce(reducer);
+            const remoteTotal = remote.reduce(reducer);
+            const onsiteTotal = onsite.reduce(reducer);
+            this.setState({ selfPrice: selfTotal, remotePrice: remoteTotal, onsitePrice: onsiteTotal })
         }
-        
     }
-
+    
     handleSelfClick = e => {
         e.preventDefault();
         this.setState({selfOpen: !this.state.selfOpen})
@@ -92,8 +79,7 @@ class OppCards extends Component{
         let showSelf = "";
         let showRemote = "";
         let showOnsite = "";
-        const calculatePrice = this.calculatePrice();
-        console.log(calculatePrice)
+
         const details = this.renderDetails();
         
         this.state.selfOpen ? showSelf = details : showSelf = <div></div>;
