@@ -1,26 +1,42 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Home from './pages/Home/Home';
+import OppForm from './pages/Form/OppForm';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { loadOpportunities } from './Store/actions/oppActions';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends React.Component {
+
+  componentDidMount(){
+    this.props.loadOpportunities();
+  }
+
+  render(){
+    return (
+      <div className="App">
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/" component={Home}/>
+            <Route path="/form" component={OppForm}/>
+          </Switch>
+        </BrowserRouter>
+      </div>
+    );
+  }
+  
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    opportunities: state.opportunities
+  }
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+    loadOpportunities: () => dispatch(loadOpportunities())
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps) (App);
